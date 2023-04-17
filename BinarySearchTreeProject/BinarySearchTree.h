@@ -38,6 +38,8 @@ private: // this private BinaryNode is within BST
   void insert(const Comparable &x, BinaryNode *&t, bool st)
   {
     // impplement here
+    if (contains(x, r2))
+      return;
     if (st == 0)
     {
       BinaryNode *cursor = t;
@@ -183,10 +185,53 @@ private: // this private BinaryNode is within BST
       return nullptr;
     else
     {
-      BinaryNode *leftClone = clone(t->left, st);
-      BinaryNode *rightClone = clone(t->right, st);
-      BinaryNode *result = new BinaryNode(t->element, leftClone, rightClone, t->status);
-      return result;
+      BinaryNode *newNode;
+      if (st == 0)
+      {
+        newNode = new BinaryNode(t->element, clone(t->left, st), clone(t->right, st), t->status);
+        return newNode;
+      }
+      else
+      {
+        newNode = new BinaryNode(t->element, nullptr, nullptr, t->status);
+
+        if (t->left != nullptr)
+        {
+          if (t->left->status == 0)
+          {
+            newNode->left = search(t->left->element, r1);
+            newNode->right = clone(t->right, st);
+          }
+          else
+          {
+            newNode->right = search(t->right->element, r1);
+            newNode->left = clone(t->left, st);
+          }
+        }
+        else
+        {
+          return nullptr;
+        }
+
+        if (t->right != nullptr)
+        {
+          if (t->right->status == 0)
+          {
+            newNode->right = search(t->right->element, r1);
+            newNode->left = clone(t->left, st);
+          }
+          else
+          {
+            newNode->left = search(t->left->element, r1);
+            newNode->right = clone(t->right, st);
+          }
+        }
+        else
+        {
+          return nullptr;
+        }
+        return newNode;
+      }
     }
   }
 
