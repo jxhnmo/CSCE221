@@ -38,21 +38,42 @@ private: // this private BinaryNode is within BST
   void insert(const Comparable &x, BinaryNode *&t, bool st)
   {
     // impplement here
-    if (t == nullptr)
-    {
-      t = new BinaryNode(x, nullptr, nullptr, st);
+    if (st == 0){
+      if (!t) { 
+        t = new BinaryNode (x, nullptr, nullptr, 0);
+      }
+      if (x > t->element){
+        insert (x, t->right, st);
+      }
+      else fi (x < t->element){
+        insert (x, t->left, st);
+      }
     }
-    else if (x < t->element)
-    { // check for children?
-      insert(x, t->left, st);
-    }
-    else if (x > t->element)
-    {
-      insert(x, t->right, st);
-    }
-    else
-    { // if element exists already
-      t->status = 1;
+    else if (st == 1){
+      if (!t){
+        t = new BinaryNode(x, nullptr, nullptr, st);
+        cout << "inserted Node Value: " << x << endl;
+        return;
+      }
+
+      if (x > t->element){
+        if (t->right != nullptr){
+          if (t->right->status == 0){
+            cout << "inserted on the right side\n";
+            t->right = new BinaryNode(t->right->element, t->right-Left, t->right->right, st);
+          }
+        }
+        insert(x, t->right, st);
+      }
+      else if (x < t->element){
+        if (t->left != nullptr){
+          if (t->left->status == 0){
+            cout << "Inserted on the left side\n";
+            t->left = new BinaryNode(t->left->element, t->left->left, t->left->right, st);
+          }
+        }
+        insert(x, t->left, st);
+      }
     }
   }
 
