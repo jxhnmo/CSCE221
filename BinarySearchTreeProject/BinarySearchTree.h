@@ -38,41 +38,53 @@ private: // this private BinaryNode is within BST
   void insert(const Comparable &x, BinaryNode *&t, bool st)
   {
     // impplement here
-    if (st == 0){
-      if (!t) { 
-        t = new BinaryNode (x, nullptr, nullptr, 0);
-      }
-      if (x > t->element){
-        insert (x, t->right, st);
-      }
-      else fi (x < t->element){
-        insert (x, t->left, st);
-      }
-    }
-    else if (st == 1){
-      if (!t){
-        t = new BinaryNode(x, nullptr, nullptr, st);
-        cout << "inserted Node Value: " << x << endl;
-        return;
+    if (st == 0)
+    {
+      BinaryNode *cursor = t;
+      BinaryNode *y = nullptr;
+      while (cursor)
+      {
+        y = cursor;
+        if (x < cursor->element)
+          cursor = cursor->left;
+        else
+          cursor = cursor->right;
       }
 
-      if (x > t->element){
-        if (t->right != nullptr){
-          if (t->right->status == 0){
-            cout << "inserted on the right side\n";
-            t->right = new BinaryNode(t->right->element, t->right-Left, t->right->right, st);
-          }
-        }
-        insert(x, t->right, st);
+      BinaryNode *newNode = new BinaryNode(x, nullptr, nullptr, st);
+      if (y == nullptr)
+        t = newNode;
+      else if (x < y->element)
+        y->left = newNode;
+      else
+        y->right = newNode;
+    }
+    else
+    {
+      if (!t && r1)
+      {
+        t = new BinaryNode(r1->element, r1->left, r1->right, st);
       }
-      else if (x < t->element){
-        if (t->left != nullptr){
-          if (t->left->status == 0){
-            cout << "Inserted on the left side\n";
-            t->left = new BinaryNode(t->left->element, t->left->left, t->left->right, st);
-          }
+
+      if (x > t->element)
+      {
+        if (t->right == nullptr)
+          t->right = new BinaryNode(x, nullptr, nullptr, st);
+        else
+        {
+          t->right = new BinaryNode(t->right->element, t->right->left, t->right->right, st);
+          insert(x, t->right, st);
         }
-        insert(x, t->left, st);
+      }
+      else
+      {
+        if (t->left == nullptr)
+          t->left = new BinaryNode(x, nullptr, nullptr, st);
+        else
+        {
+          t->left = new BinaryNode(t->left->element, t->left->left, t->left->right, st);
+          insert(x, t->left, st);
+        }
       }
     }
   }
