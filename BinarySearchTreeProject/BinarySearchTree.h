@@ -74,7 +74,9 @@ private: // this private BinaryNode is within BST
           t->right = new BinaryNode(x, nullptr, nullptr, st);
         else
         {
-          t->right = new BinaryNode(t->right->element, t->right->left, t->right->right, st);
+          // BinaryNode *temp = t->right;
+          t->right = new BinaryNode(t->right->element, t->right->left, t->right->right, st); // memory leak here?
+          // delete temp;
           insert(x, t->right, st);
         }
       }
@@ -84,7 +86,9 @@ private: // this private BinaryNode is within BST
           t->left = new BinaryNode(x, nullptr, nullptr, st);
         else
         {
+          // BinaryNode *temp = t->left;
           t->left = new BinaryNode(t->left->element, t->left->left, t->left->right, st);
+          // delete temp;
           insert(x, t->left, st);
         }
       }
@@ -145,31 +149,8 @@ private: // this private BinaryNode is within BST
 
     if (t->status == st || st == 0)
     {
-      if (t->left != nullptr)
-      {
-        t->left->status = t->status;
-      }
-      if (t->right != nullptr)
-      {
-        t->right->status = t->status;
-      }
       delete t;
-    }
-    else if (t->status == 0 && st == 1)
-    {
-      BinaryNode *newNode = new BinaryNode(t->element, nullptr, nullptr, 0);
-      t->status = 1;
-      newNode->left = t;
-      newNode->status = 1;
-      t = newNode;
-    }
-    else
-    {
-      BinaryNode *newNode = new BinaryNode(t->element, nullptr, nullptr, 0);
-      t->status = 0;
-      newNode->right = t;
-      newNode->status = 1;
-      t = newNode;
+      t = nullptr; // Set the node pointer to nullptr after deleting it.
     }
   }
 
@@ -185,53 +166,33 @@ private: // this private BinaryNode is within BST
       return nullptr;
     else
     {
-      BinaryNode *newNode;
+      BinaryNode *newNode = new BinaryNode(t->element, nullptr, nullptr, t->status);
       if (st == 0)
       {
-        newNode = new BinaryNode(t->element, clone(t->left, st), clone(t->right, st), t->status);
-        return newNode;
+        newNode->left = clone(t->left, st);
+        newNode->right = clone(t->right, st);
       }
       else
       {
-        newNode = new BinaryNode(t->element, nullptr, nullptr, t->status);
-
-        if (t->left != nullptr)
+        if (t->left != nullptr && t->left->status == 0)
         {
-          if (t->left->status == 0)
-          {
-            newNode->left = search(t->left->element, r1);
-            newNode->right = clone(t->right, st);
-          }
-          else
-          {
-            newNode->right = search(t->right->element, r1);
-            newNode->left = clone(t->left, st);
-          }
+          newNode->left = search(t->left->element, r1);
         }
         else
         {
-          return nullptr;
+          newNode->left = clone(t->left, st);
         }
 
-        if (t->right != nullptr)
+        if (t->right != nullptr && t->right->status == 0)
         {
-          if (t->right->status == 0)
-          {
-            newNode->right = search(t->right->element, r1);
-            newNode->left = clone(t->left, st);
-          }
-          else
-          {
-            newNode->left = search(t->left->element, r1);
-            newNode->right = clone(t->right, st);
-          }
+          newNode->right = search(t->right->element, r1);
         }
         else
         {
-          return nullptr;
+          newNode->right = clone(t->right, st);
         }
-        return newNode;
       }
+      return newNode;
     }
   }
 
